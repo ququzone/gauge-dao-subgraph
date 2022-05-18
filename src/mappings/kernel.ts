@@ -1,10 +1,10 @@
 import { DataSourceContext, Value } from '@graphprotocol/graph-ts'
 import { integer } from '@protofire/subgraph-toolkit'
 
-import { NewAppProxy } from '../../../generated/DAO/Kernel'
-import { Voting } from '../../../generated/templates'
+import { NewAppProxy } from '../../generated/DAO/Kernel'
+import { Voting } from '../../generated/templates'
 
-import { Contract, ContractVersion } from '../../../generated/schema'
+import { Contract, ContractVersion } from '../../generated/schema'
 
 const VOTING_APP_ID = '0x2436adbbb3230545df6846695013211d36736f647c91b302b9591e5e2d013485'
 const VOTING_TYPE: string[] = ['Ownership', 'Parameter']

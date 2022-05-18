@@ -46,11 +46,39 @@ type Account @entity {
   proposalVotes: [ProposalVote!] @derivedFrom(field: "voter")
 }
 
+type Contract @entity {
+  id: ID!
+
+  " Human-readable description "
+  description: String
+
+  added: BigInt!
+  addedAtBlock: BigInt!
+  addedAtTransaction: Bytes!
+
+  modified: BigInt!
+  modifiedAtBlock: BigInt!
+  modifiedAtTransaction: Bytes!
+
+  versions: [ContractVersion!] @derivedFrom(field: "contract")
+}
+
+type ContractVersion @entity {
+  id: ID!
+  contract: Contract!
+  address: Bytes!
+  version: BigInt!
+
+  added: BigInt!
+  addedAtBlock: BigInt!
+  addedAtTransaction: Bytes!
+}
+
 type Gauge @entity {
   id: ID!
   address: Bytes!
   type: GaugeType!
-  pool: Pool
+  pool: Bytes!
 
   created: BigInt!
   createdAtBlock: BigInt!
@@ -131,7 +159,7 @@ type LpToken @entity {
   name: String
   symbol: String
   gauge: Gauge
-  pool: Pool
+  pool: Bytes!
 }
 
 type VotingApp @entity {

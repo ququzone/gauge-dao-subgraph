@@ -10,11 +10,11 @@ import {
   MinimumTimeSet,
   StartVote,
   Voting,
-} from '../../../generated/templates/Voting/Voting'
+} from '../../generated/templates/Voting/Voting'
 
-import { Proposal, ProposalVote, VotingApp } from '../../../generated/schema'
+import { Proposal, ProposalVote, VotingApp } from '../../generated/schema'
 
-import { getOrRegisterAccount } from '../../services/accounts'
+import { getOrRegisterAccount } from '../services/accounts'
 
 export function handleMinimumBalanceSet(event: MinimumBalanceSet): void {
   let app = getOrRegisterVotingApp(event.address)

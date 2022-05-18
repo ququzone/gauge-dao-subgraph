@@ -8,11 +8,11 @@ import {
   NewGaugeWeight,
   NewTypeWeight,
   VoteForGauge,
-} from '../../../generated/GaugeController/GaugeController'
+} from '../../generated/GaugeController/GaugeController'
 
-import { LiquidityGauge as GaugeContract } from '../../../generated/GaugeController/LiquidityGauge'
+import { LiquidityGauge as GaugeContract } from '../../generated/GaugeController/LiquidityGauge'
 
-import { LiquidityGauge } from '../../../generated/templates'
+import { LiquidityGauge } from '../../generated/templates'
 
 import {
   Gauge,
@@ -21,13 +21,11 @@ import {
   GaugeTypeWeight,
   GaugeWeight,
   GaugeWeightVote,
-  Pool,
-} from '../../../generated/schema'
+} from '../../generated/schema'
 
 import { getOrRegisterAccount } from '../services/accounts'
 import { getGaugeType, registerGaugeType } from '../services/gauge-types'
 import { getSystemState } from '../services/system-state'
-import { getOrCreateLpToken } from '../services/tokens'
 
 import { GAUGE_TOTAL_WEIGHT_PRECISION } from '../constants'
 
@@ -90,17 +88,7 @@ export function handleNewGauge(event: NewGauge): void {
 
   // Associate gauge to a pool via the LP token
   let lpToken = GaugeContract.bind(event.params.addr).try_lp_token()
-
-  if (!lpToken.reverted) {
-    let token = getOrCreateLpToken(lpToken.value)
-    token.gauge = gauge.id
-    token.save()
-
-    if (token.pool != null) {
-      let pool = Pool.load(token.pool)!
-      gauge.pool = pool.id
-    }
-  }
+  gauge.pool = lpToken.value
 
   gauge.save()
 

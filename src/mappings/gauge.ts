@@ -1,10 +1,10 @@
 import { decimal } from '@protofire/subgraph-toolkit'
 
-import { Deposit, UpdateLiquidityLimit, Withdraw } from '../../../generated/templates/LiquidityGauge/LiquidityGauge'
+import { Deposit, UpdateLiquidityLimit, Withdraw } from '../../generated/templates/LiquidityGauge/LiquidityGauge'
 
-import { GaugeDeposit, GaugeLiquidity, GaugeWithdraw } from '../../../generated/schema'
+import { GaugeDeposit, GaugeLiquidity, GaugeWithdraw } from '../../generated/schema'
 
-import { getOrRegisterAccount } from '../../services/accounts'
+import { getOrRegisterAccount } from '../services/accounts'
 
 export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimit): void {
   let account = getOrRegisterAccount(event.params.user)
