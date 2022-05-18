@@ -1,0 +1,273 @@
+type SystemState @entity {
+  " Singleton ID, equals to 'current' "
+  id: ID!
+
+  " Current pool registry address "
+  registryContract: Bytes
+
+  " Number of contracts in the AddressProvider registry "
+  contractCount: BigInt!
+
+  " Number of gauges registered "
+  gaugeCount: BigInt!
+
+  " Number of gauge types registered "
+  gaugeTypeCount: BigInt!
+
+  " Number of active pools "
+  poolCount: BigInt!
+
+  " Number of tokens registered "
+  tokenCount: BigInt!
+
+  " Total number of pools (including removed ones) "
+  totalPoolCount: BigInt!
+
+  updated: BigInt!
+  updatedAtBlock: BigInt!
+  updatedAtTransaction: Bytes!
+}
+
+type Account @entity {
+  id: ID!
+
+  address: Bytes!
+
+  " Liquidity gauges this account contributed to "
+  gauges: [GaugeLiquidity!] @derivedFrom(field: "user")
+
+  "  "
+  gaugeWeightVotes: [GaugeWeightVote!] @derivedFrom(field: "user")
+
+  " Proposal created by this account "
+  proposals: [Proposal!] @derivedFrom(field: "creator")
+
+  "  "
+  proposalVotes: [ProposalVote!] @derivedFrom(field: "voter")
+}
+
+type Gauge @entity {
+  id: ID!
+  address: Bytes!
+  type: GaugeType!
+  pool: Pool
+
+  created: BigInt!
+  createdAtBlock: BigInt!
+  createdAtTransaction: Bytes!
+
+  weights: [GaugeWeight!] @derivedFrom(field: "gauge")
+
+  weightVotes: [GaugeWeightVote!] @derivedFrom(field: "gauge")
+}
+
+type GaugeWeight @entity {
+  id: ID!
+  gauge: Gauge!
+  time: BigInt!
+  weight: BigDecimal!
+}
+
+type GaugeWeightVote @entity {
+  id: ID!
+  gauge: Gauge!
+  user: Account!
+  time: BigInt!
+  weight: BigDecimal!
+}
+
+type GaugeType @entity {
+  id: ID!
+  name: String!
+  gaugeCount: BigInt!
+  gauges: [Gauge!] @derivedFrom(field: "type")
+  weights: [GaugeTypeWeight!] @derivedFrom(field: "type")
+}
+
+type GaugeTypeWeight @entity {
+  id: ID!
+  type: GaugeType!
+  time: BigInt!
+  weight: BigDecimal!
+}
+
+type GaugeTotalWeight @entity {
+  id: ID!
+  time: BigInt!
+  weight: BigDecimal!
+}
+
+type GaugeLiquidity @entity {
+  id: ID!
+  user: Account!
+  gauge: Gauge!
+  originalBalance: BigInt!
+  originalSupply: BigInt!
+  workingBalance: BigInt!
+  workingSupply: BigInt!
+  timestamp: BigInt!
+  block: BigInt!
+  transaction: Bytes!
+}
+
+type GaugeDeposit @entity {
+  id: ID!
+  gauge: Gauge!
+  provider: Account!
+  value: BigDecimal!
+}
+
+type GaugeWithdraw @entity {
+  id: ID!
+  gauge: Gauge!
+  provider: Account!
+  value: BigDecimal!
+}
+
+type LpToken @entity {
+  id: ID!
+  address: Bytes!
+  decimals: BigInt!
+  name: String
+  symbol: String
+  gauge: Gauge
+  pool: Pool
+}
+
+type VotingApp @entity {
+  " Equals to app address "
+  id: ID!
+
+  " Voting app instance "
+  address: Bytes!
+
+  " App codename "
+  codename: String!
+
+  " Minimum balance needed to create a proposal "
+  minimumBalance: BigDecimal!
+
+  " Percentage of positive votes in total possible votes for a proposal to be accepted "
+  minimumQuorum: BigDecimal!
+
+  " Minimum time needed to pass between user's previous proposal and a user creating a new proposal "
+  minimumTime: BigInt!
+
+  " Percentage of positive votes needed for a proposal to be accepted "
+  requiredSupport: BigDecimal!
+
+  " Seconds that a proposal will be open for vote (unless enough votes have been cast to make an early decision) "
+  voteTime: BigInt!
+
+  " Number of proposals created with this app "
+  proposalCount: BigInt!
+
+  " Number of votes received by all the proposals created with this app "
+  voteCount: BigInt!
+
+  " Address of the token used for voting "
+  token: Bytes!
+
+  " Proposals created through this app instance "
+  proposals: [Proposal!] @derivedFrom(field: "app")
+}
+
+type Proposal @entity {
+  id: ID!
+
+  " Sequential number in related to the realted voting app "
+  number: BigInt!
+
+  " Voting app instance "
+  app: VotingApp!
+
+  " Proposal creator's account "
+  creator: Account!
+
+  "  "
+  executionScript: Bytes!
+
+  "  "
+  expireDate: BigInt!
+
+  " Percentage of positive votes in total possible votes for this proposal to be accepted "
+  minimumQuorum: BigDecimal!
+
+  " Percentage of positive votes needed for this proposal to be accepted "
+  requiredSupport: BigDecimal!
+
+  "  "
+  snapshotBlock: BigInt!
+
+  "  "
+  votingPower: BigDecimal!
+
+  " Link to metadata file "
+  metadata: String
+
+  " Proposal description text "
+  text: String
+
+  " Number of votes received by the proposal "
+  voteCount: BigInt!
+
+  " Number of positive votes (yes) received by the proposal "
+  positiveVoteCount: BigInt!
+
+  " Number of negative votes (no) received by the proposal "
+  negativeVoteCount: BigInt!
+
+  "  "
+  currentQuorum: BigDecimal!
+
+  "  "
+  currentSupport: BigDecimal!
+
+  "  "
+  stakedSupport: BigDecimal!
+
+  "  "
+  totalStaked: BigDecimal!
+
+  "  "
+  created: BigInt!
+
+  "  "
+  createdAtBlock: BigInt!
+
+  "  "
+  createdAtTransaction: Bytes!
+
+  "  "
+  updated: BigInt
+
+  "  "
+  updatedAtBlock: BigInt
+
+  "  "
+  updatedAtTransaction: Bytes
+
+  "  "
+  executed: BigInt
+
+  "  "
+  executedAtBlock: BigInt
+
+  "  "
+  executedAtTransaction: Bytes
+
+  "  "
+  votes: [ProposalVote!] @derivedFrom(field: "proposal")
+}
+
+type ProposalVote @entity {
+  id: ID!
+  proposal: Proposal!
+  supports: Boolean!
+  stake: BigDecimal!
+  voter: Account!
+
+  created: BigInt!
+  createdAtBlock: BigInt!
+  createdAtTransaction: Bytes!
+}
