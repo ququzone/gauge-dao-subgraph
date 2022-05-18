@@ -9,7 +9,7 @@ templates:
   # Measures the amount of liquidity provided by each user
   - name: LiquidityGauge
     kind: ethereum/contract
-    network: mainnet
+    network: iotex_testnet
     source:
       abi: LiquidityGauge
     mapping: &liquidity_gauge_mapping
@@ -32,7 +32,7 @@ templates:
   # Custom version of Aragon Voting App
   - name: Voting
     kind: ethereum/contract
-    network: mainnet
+    network: iotex_testnet
     source:
       abi: Voting
     mapping:
@@ -64,7 +64,7 @@ dataSources:
   # Controls liquidity gauges and the issuance of CRV through the liquidity gauges
   - name: GaugeController
     kind: ethereum/contract
-    network: mainnet
+    network: iotex_testnet
     source:
       abi: GaugeController
       address: '0x3679be4A7A7Bf060152721d3779Ca028E3721a7E'
@@ -102,7 +102,7 @@ dataSources:
   # Aragon DAO instance (dao.curvefi.eth)
   - name: DAO
     kind: ethereum/contract
-    network: mainnet
+    network: iotex_testnet
     source:
       abi: Kernel
       address: '0xad06868167bc5ac5cfcbef2cafa82bc76961d72d'
