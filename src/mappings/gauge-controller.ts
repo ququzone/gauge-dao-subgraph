@@ -10,6 +10,10 @@ import {
   VoteForGauge,
 } from '../../generated/GaugeController/GaugeController'
 
+import {
+  ERC20
+} from '../../generated/GaugeController/ERC20'
+
 import { LiquidityGauge as GaugeContract } from '../../generated/GaugeController/LiquidityGauge'
 
 import { LiquidityGauge } from '../../generated/templates'
@@ -21,13 +25,14 @@ import {
   GaugeTypeWeight,
   GaugeWeight,
   GaugeWeightVote,
+  GaugeVote
 } from '../../generated/schema'
 
 import { getOrRegisterAccount } from '../services/accounts'
 import { getGaugeType, registerGaugeType } from '../services/gauge-types'
 import { getSystemState } from '../services/system-state'
 
-import { GAUGE_TOTAL_WEIGHT_PRECISION } from '../constants'
+import { GAUGE_WEIGHT_PRECISION, GAUGE_TOTAL_WEIGHT_PRECISION } from '../constants'
 
 let WEEK = integer.fromNumber(604800)
 
@@ -184,6 +189,17 @@ export function handleVoteForGauge(event: VoteForGauge): void {
     vote.time = event.params.time
     vote.weight = decimal.fromBigInt(event.params.weight)
     vote.save()
+
+    let ve = ERC20.bind(gaugeController.voting_escrow())
+    let gaugeVote = new GaugeVote(event.transaction.hash.toString())
+    gaugeVote.time = event.params.time
+    gaugeVote.user = event.params.user
+    gaugeVote.gauge = event.params.gauge_addr
+    gaugeVote.weight = event.params.weight
+    gaugeVote.totalWeight = decimal.fromBigInt(gaugeController.points_total(nextWeek), GAUGE_TOTAL_WEIGHT_PRECISION)
+    gaugeVote.vePICO = decimal.fromBigInt(ve.balanceOf(event.params.user), GAUGE_WEIGHT_PRECISION)
+    gaugeVote.totalvePICO = decimal.fromBigInt(ve.totalSupply(), GAUGE_WEIGHT_PRECISION)
+    gaugeVote.save()
   }
 }
 

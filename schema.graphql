@@ -299,3 +299,14 @@ type ProposalVote @entity {
   createdAtBlock: BigInt!
   createdAtTransaction: Bytes!
 }
+
+type GaugeVote @entity {
+  id: ID!
+  time: BigInt!
+  user: Bytes!
+  gauge: Bytes!
+  weight: BigInt!
+  totalWeight: BigDecimal
+  vePICO: BigDecimal
+  totalvePICO: BigDecimal
+}
