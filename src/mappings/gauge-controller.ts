@@ -191,7 +191,7 @@ export function handleVoteForGauge(event: VoteForGauge): void {
     vote.save()
 
     let ve = ERC20.bind(gaugeController.voting_escrow())
-    let gaugeVote = new GaugeVote(event.transaction.hash.toString())
+    let gaugeVote = new GaugeVote(event.transaction.hash.toHexString())
     gaugeVote.time = event.params.time
     gaugeVote.user = event.params.user
     gaugeVote.gauge = event.params.gauge_addr
