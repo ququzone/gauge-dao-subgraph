@@ -305,7 +305,7 @@ type GaugeVote @entity {
   time: BigInt!
   user: Bytes!
   gauge: Bytes!
-  weight: BigInt!
+  weight: BigDecimal!
   totalWeight: BigDecimal
   vePICO: BigDecimal
   totalvePICO: BigDecimal

@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { decimal, integer } from '@protofire/subgraph-toolkit'
 
 import {
@@ -195,9 +195,11 @@ export function handleVoteForGauge(event: VoteForGauge): void {
     gaugeVote.time = event.params.time
     gaugeVote.user = event.params.user
     gaugeVote.gauge = event.params.gauge_addr
-    gaugeVote.weight = event.params.weight
+    let bigWeight = new BigDecimal(event.params.weight)
+    gaugeVote.weight = bigWeight.div(BigDecimal.fromString("10000"))
     gaugeVote.totalWeight = decimal.fromBigInt(gaugeController.points_total(nextWeek), GAUGE_TOTAL_WEIGHT_PRECISION)
-    gaugeVote.vePICO = decimal.fromBigInt(ve.balanceOf(event.params.user), GAUGE_WEIGHT_PRECISION)
+    let userve = ve.balanceOf(event.params.user)
+    gaugeVote.vePICO = decimal.fromBigInt(userve.times(event.params.weight).div(BigInt.fromI32(10000)), GAUGE_WEIGHT_PRECISION)
     gaugeVote.totalvePICO = decimal.fromBigInt(ve.totalSupply(), GAUGE_WEIGHT_PRECISION)
     gaugeVote.save()
   }
